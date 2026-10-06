@@ -274,7 +274,6 @@ def initialize():
 
     connection.close()
 
-
 @app.route("/")
 def home():
 
@@ -284,13 +283,42 @@ def home():
         "SELECT * FROM leads ORDER BY id DESC"
     ).fetchall()
 
+    total = connection.execute(
+        "SELECT COUNT(*) FROM leads"
+    ).fetchone()[0]
+
+    novos = connection.execute(
+        "SELECT COUNT(*) FROM leads WHERE stage = 'Novo'"
+    ).fetchone()[0]
+
+    interessados = connection.execute(
+        "SELECT COUNT(*) FROM leads WHERE stage = 'Interessado'"
+    ).fetchone()[0]
+
+    visitas = connection.execute(
+        "SELECT COUNT(*) FROM leads WHERE stage = 'Visita agendada'"
+    ).fetchone()[0]
+
+    propostas = connection.execute(
+        "SELECT COUNT(*) FROM leads WHERE stage = 'Proposta'"
+    ).fetchone()[0]
+
+    fechados = connection.execute(
+        "SELECT COUNT(*) FROM leads WHERE stage = 'Fechado'"
+    ).fetchone()[0]
+
     connection.close()
 
     return render_template_string(
         HTML,
-        leads=leads
+        leads=leads,
+        total=total,
+        novos=novos,
+        interessados=interessados,
+        visitas=visitas,
+        propostas=propostas,
+        fechados=fechados
     )
-
 
 @app.post("/add")
 def add_lead():
