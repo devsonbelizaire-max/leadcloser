@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LeadCloser - Dashboard</title>
+    <style>
+        body { font-family: sans-serif; background: #f4f6f8; margin: 0; padding: 20px; }
+        .header { display: flex; justify-content: space-between; align-items: center; background: #0f172a; color: white; padding: 15px 20px; border-radius: 8px; margin-bottom: 20px; }
+        .header h1 { margin: 0; font-size: 20px; }
+        .user-info { display: flex; align-items: center; gap: 15px; }
+        .logout-btn { color: #f87171; text-decoration: none; font-weight: bold; }
+        .card { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        h2 { margin-top: 0; color: #0f172a; }
+        input, textarea { width: 100%; padding: 10px; margin: 8px 0; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        button { width: 100%; padding: 10px; background: #0f172a; color: white; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; }
+        .stats { display: flex; gap: 15px; margin-bottom: 20px; }
+        .stat-box { background: white; padding: 15px; border-radius: 8px; text-align: center; flex: 1; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .stat-box h3 { margin: 0; font-size: 14px; color: #64748b; }
+        .stat-box p { margin: 5px 0 0; font-size: 24px; font-weight: bold; color: #0f172a; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { padding: 10px; text-align: left; border-bottom: 1px solid #e2e8f0; }
+        th { background: #f8fafc; color: #475569; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>LeadCloser</h1>
+        <div class="user-info">
+            <span>{{ email }}</span>
+            <a href="/logout" class="logout-btn">Sair</a>
+        </div>
+    </div>
+
+    <div class="stats">
+        <div class="stat-box">
+            <h3>Total de Leads</h3>
+            <p>{{ total_leads }}</p>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Novo Lead</h2>
+        <form method="POST">
+            <input type="text" name="nome" placeholder="Nome do cliente" required>
+            <input type="text" name="whatsapp" placeholder="WhatsApp" required>
+            <input type="text" name="imovel" placeholder="Imóvel de interesse">
+            <textarea name="observacoes" placeholder="Observações" rows="3"></textarea>
+            <button type="submit">Adicionar Lead</button>
+        </form>
+    </div>
+
+    <div class="card">
+        <h2>Pipeline de Leads</h2>
+        {% if leads %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>WhatsApp</th>
+                    <th>Imóvel</th>
+                    <th>Observações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for lead in leads %}
+                <tr>
+                    <td>{{ lead.nome }}</td>
+                    <td>{{ lead.whatsapp }}</td>
+                    <td>{{ lead.imovel }}</td>
+                    <td>{{ lead.observacoes }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p>Ainda não existem leads cadastrados.</p>
+        {% endif %}
+    </div>
+</body>
+</html>
