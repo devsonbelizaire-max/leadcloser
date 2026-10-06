@@ -221,7 +221,9 @@ Vi que você demonstrou interesse em
 Posso te ajudar com mais informações e algumas opções que podem combinar com o que você procura?
 
 </div>
-
+<a href="https://wa.me/{{ lead['phone']|replace(' ', '')|replace('+', '')|replace('-', '')|replace('(', '')|replace(')', '') }}" target="_blank" style="display:block; text-align:center; background:#25D366; color:white; padding:12px; border-radius:8px; text-decoration:none; margin-top:12px;">
+    💬 Falar no WhatsApp
+</a>
 </div>
 
 {% else %}
