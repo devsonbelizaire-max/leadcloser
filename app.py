@@ -35,7 +35,8 @@ def load_user(user_id):
     cursor.close()
     conn.close()
     if user_data:
-        return User(id=user_data['id'], email=user_data['email'], password_hash=user_data['password'])
+        pwd = user_data.get('password') or user_data.get('senha')
+        return User(id=user_data['id'], email=user_data['email'], password_hash=pwd)
     return None
 
 # --- RUTAS DE LA APLICACIÓN ---
@@ -101,12 +102,15 @@ def login():
         cursor.close()
         conn.close()
 
-        if user_data and check_password_hash(user_data['password'], password):
-            user = User(id=user_data['id'], email=user_data['email'], password_hash=user_data['password'])
-            login_user(user)
-            return redirect(url_for('index'))
-        else:
-            flash('E-mail ou senha incorretos.')
+        if user_data:
+            # Revisa si la columna se llama 'password' o 'senha'
+            pwd_hash = user_data.get('password') or user_data.get('senha')
+            if pwd_hash and check_password_hash(pwd_hash, password):
+                user = User(id=user_data['id'], email=user_data['email'], password_hash=pwd_hash)
+                login_user(user)
+                return redirect(url_for('index'))
+
+        flash('E-mail ou senha incorretos.')
 
     return render_template('login.html')
 
