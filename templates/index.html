@@ -4,88 +4,136 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LeadCloser - Dashboard</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { font-family: sans-serif; background: #f4f6f8; margin: 0; padding: 20px; }
-        .header { display: flex; justify-content: space-between; align-items: center; background: #0f172a; color: white; padding: 15px 20px; border-radius: 8px; margin-bottom: 20px; }
-        .header h1 { margin: 0; font-size: 20px; }
-        .user-info { display: flex; align-items: center; gap: 15px; }
-        .logout-btn { color: #f87171; text-decoration: none; font-weight: bold; }
-        .card { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-        h2 { margin-top: 0; color: #0f172a; }
-        input, textarea { width: 100%; padding: 10px; margin: 8px 0; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
-        button { width: 100%; padding: 10px; background: #0f172a; color: white; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; }
-        .stats { display: flex; gap: 15px; margin-bottom: 20px; }
-        .stat-box { background: white; padding: 15px; border-radius: 8px; text-align: center; flex: 1; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-        .stat-box h3 { margin: 0; font-size: 14px; color: #64748b; }
-        .stat-box p { margin: 5px 0 0; font-size: 24px; font-weight: bold; color: #0f172a; }
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th, td { padding: 10px; text-align: left; border-bottom: 1px solid #e2e8f0; }
-        th { background: #f8fafc; color: #475569; }
+        body { background-color: #f8fafc; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        .navbar-custom { background-color: #0f172a; }
+        .card-custom { border: none; border-radius: 14px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04); }
+        .btn-whatsapp { background-color: #25D366; color: white; font-weight: 600; border: none; white-space: nowrap; }
+        .btn-whatsapp:hover { background-color: #1ebc57; color: white; }
+        .table th { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; color: #64748b; border-bottom: 2px solid #f1f5f9; }
+        .form-control, .form-select { border-radius: 8px; border: 1px solid #cbd5e1; padding: 10px 14px; }
+        .form-control:focus, .form-select:focus { border-color: #0f172a; box-shadow: 0 0 0 0.2rem rgba(15, 23, 42, 0.1); }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>LeadCloser</h1>
-        <div class="user-info">
-            <span>{{ email }}</span>
-            <a href="/logout" class="logout-btn">Sair</a>
+
+    <nav class="navbar navbar-custom text-white py-3 mb-4">
+        <div class="container d-flex justify-content-between align-items-center">
+            <span class="fw-bold fs-4">LeadCloser</span>
+            <a href="/logout" class="btn btn-sm btn-outline-light rounded-pill px-3">Sair</a>
+        </div>
+    </nav>
+
+    <div class="container pb-5">
+        <!-- Widget Total de Leads -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card card-custom p-3 text-center">
+                    <span class="text-muted fw-semibold small">Total de Leads</span>
+                    <h2 class="fw-bold text-dark m-0 display-6">{{ leads|length if leads else 0 }}</h2>
+                </div>
+            </div>
+        </div>
+
+        <!-- Formulario Novo Lead -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card card-custom p-4">
+                    <h5 class="fw-bold mb-3 text-dark">Novo Lead</h5>
+                    <form action="/" method="POST">
+                        <div class="mb-3">
+                            <input type="text" name="nome" class="form-control" placeholder="Nome do cliente" required>
+                        </div>
+                        <div class="mb-3">
+                            <input type="text" name="whatsapp" class="form-control" placeholder="WhatsApp (ex: 5555999998888)" required>
+                        </div>
+                        <div class="mb-3">
+                            <input type="text" name="imovel" class="form-control" placeholder="Imóvel de interesse">
+                        </div>
+                        <div class="mb-3">
+                            <select name="status" class="form-select">
+                                <option value="Novo" selected>Novo</option>
+                                <option value="Em Atendimento">Em Atendimento</option>
+                                <option value="Negociando">Negociando</option>
+                                <option value="Fechado">Fechado</option>
+                                <option value="Perdido">Perdido</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <textarea name="observacoes" class="form-control" rows="2" placeholder="Observações"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-dark w-100 fw-bold py-2 rounded-3">Adicionar Lead</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabla Pipeline de Leads -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card card-custom p-4">
+                    <h5 class="fw-bold mb-3 text-dark">Pipeline de Leads</h5>
+                    
+                    {% if leads %}
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>Status</th>
+                                    <th>WhatsApp</th>
+                                    <th>Imóvel</th>
+                                    <th>Observações</th>
+                                    <th class="text-end">Ação</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for lead in leads %}
+                                <tr>
+                                    <td class="fw-bold text-dark text-nowrap">{{ lead.nome }}</td>
+                                    <td>
+                                        <form action="/update_status/{{ lead.id }}" method="POST" class="m-0">
+                                            <select name="status" onchange="this.form.submit()" class="form-select form-select-sm fw-bold border-0 
+                                                {% if lead.status == 'Novo' %}bg-primary text-white
+                                                {% elif lead.status == 'Em Atendimento' %}bg-info text-dark
+                                                {% elif lead.status == 'Negociando' %}bg-warning text-dark
+                                                {% elif lead.status == 'Fechado' %}bg-success text-white
+                                                {% else %}bg-secondary text-white{% endif %}" style="width: 140px;">
+                                                <option value="Novo" {% if lead.status == 'Novo' %}selected{% endif %}>Novo</option>
+                                                <option value="Em Atendimento" {% if lead.status == 'Em Atendimento' %}selected{% endif %}>Em Atendimento</option>
+                                                <option value="Negociando" {% if lead.status == 'Negociando' %}selected{% endif %}>Negociando</option>
+                                                <option value="Fechado" {% if lead.status == 'Fechado' %}selected{% endif %}>Fechado</option>
+                                                <option value="Perdido" {% if lead.status == 'Perdido' %}selected{% endif %}>Perdido</option>
+                                            </select>
+                                        </form>
+                                    </td>
+                                    <td class="text-nowrap">{{ lead.whatsapp }}</td>
+                                    <td class="text-nowrap">{{ lead.imovel if lead.imovel else '-' }}</td>
+                                    <td class="text-muted small">{{ lead.observacoes if lead.observacoes else '-' }}</td>
+                                    <td class="text-end">
+                                        {% set phone = lead.whatsapp | string | replace('+', '') | replace(' ', '') | replace('-', '') | replace('(', '') | replace(')', '') %}
+                                        <a href="https://wa.me/{{ phone }}?text=Olá%20{{ lead.nome }},%20tudo%20bem?%20Vi%20seu%20interesse%20no%20imóvel%20{{ lead.imovel }}." 
+                                           target="_blank" 
+                                           class="btn btn-whatsapp btn-sm px-3 py-2 rounded-pill">
+                                            <i class="fa-brands fa-whatsapp me-1"></i> WhatsApp
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <p class="text-muted my-2">Ainda não existem leads cadastrados.</p>
+                    {% endif %}
+                </div>
+            </div>
         </div>
     </div>
 
-    <div class="stats">
-        <div class="stat-box">
-            <h3>Total de Leads</h3>
-            <p>{{ total_leads }}</p>
-        </div>
-    </div>
-
-    <div class="card">
-        <h2>Novo Lead</h2>
-        <form method="POST">
-            <input type="text" name="nome" placeholder="Nome do cliente" required>
-            <input type="text" name="whatsapp" placeholder="WhatsApp" required>
-            <input type="text" name="imovel" placeholder="Imóvel de interesse">
-            <textarea name="observacoes" placeholder="Observações" rows="3"></textarea>
-            <button type="submit">Adicionar Lead</button>
-        </form>
-    </div>
-
-    <div class="card">
-        <h2>Pipeline de Leads</h2>
-        {% if leads %}
-   <table class="table">
-    <thead>
-        <tr>
-            <th>Nome</th>
-            <th>WhatsApp</th>
-            <th>Imóvel</th>
-            <th>Observações</th>
-            <th>Ação</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for lead in leads %}
-        <tr>
-            <td>{{ lead.nome }}</td>
-            <td>{{ lead.whatsapp }}</td>
-            <td>{{ lead.imovel }}</td>
-            <td>{{ lead.observacoes }}</td>
-            <td>
-                {% set phone_clean = lead.whatsapp | replace('+', '') | replace(' ', '') | replace('-', '') %}
-                <a href="https://wa.me/{{ phone_clean }}?text=Olá%20{{ lead.nome }},%20tudo%20bem?%20Vi%20seu%20interesse%20no%20imóvel%20{{ lead.imovel }}." 
-                   target="_blank" 
-                   style="background-color: #25D366; color: white; padding: 6px 12px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">
-                    Chamar no WhatsApp 💬
-                </a>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-
-        {% else %}
-        <p>Ainda não existem leads cadastrados.</p>
-        {% endif %}
-    </div>
 </body>
 </html>
