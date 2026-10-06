@@ -53,26 +53,36 @@
     <div class="card">
         <h2>Pipeline de Leads</h2>
         {% if leads %}
-        <table>
-            <thead>
-                <tr>
-                    <th>Nome</th>
-                    <th>WhatsApp</th>
-                    <th>Imóvel</th>
-                    <th>Observações</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for lead in leads %}
-                <tr>
-                    <td>{{ lead.nome }}</td>
-                    <td>{{ lead.whatsapp }}</td>
-                    <td>{{ lead.imovel }}</td>
-                    <td>{{ lead.observacoes }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+   <table class="table">
+    <thead>
+        <tr>
+            <th>Nome</th>
+            <th>WhatsApp</th>
+            <th>Imóvel</th>
+            <th>Observações</th>
+            <th>Ação</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for lead in leads %}
+        <tr>
+            <td>{{ lead.nome }}</td>
+            <td>{{ lead.whatsapp }}</td>
+            <td>{{ lead.imovel }}</td>
+            <td>{{ lead.observacoes }}</td>
+            <td>
+                {% set phone_clean = lead.whatsapp | replace('+', '') | replace(' ', '') | replace('-', '') %}
+                <a href="https://wa.me/{{ phone_clean }}?text=Olá%20{{ lead.nome }},%20tudo%20bem?%20Vi%20seu%20interesse%20no%20imóvel%20{{ lead.imovel }}." 
+                   target="_blank" 
+                   style="background-color: #25D366; color: white; padding: 6px 12px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">
+                    Chamar no WhatsApp 💬
+                </a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
         {% else %}
         <p>Ainda não existem leads cadastrados.</p>
         {% endif %}
