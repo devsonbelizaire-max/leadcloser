@@ -149,7 +149,39 @@ O LeadCloser organiza os leads e ajuda o corretor a saber quem precisa de follow
 </div>
 
 <div class="card">
+<div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:12px; margin-bottom:20px;">
 
+<div class="card" style="margin:0; text-align:center;">
+<strong>Total</strong>
+<h2>{{ total }}</h2>
+</div>
+
+<div class="card" style="margin:0; text-align:center;">
+<strong>Novos</strong>
+<h2>{{ novos }}</h2>
+</div>
+
+<div class="card" style="margin:0; text-align:center;">
+<strong>Interessados</strong>
+<h2>{{ interessados }}</h2>
+</div>
+
+<div class="card" style="margin:0; text-align:center;">
+<strong>Visitas</strong>
+<h2>{{ visitas }}</h2>
+</div>
+
+<div class="card" style="margin:0; text-align:center;">
+<strong>Propostas</strong>
+<h2>{{ propostas }}</h2>
+</div>
+
+<div class="card" style="margin:0; text-align:center;">
+<strong>Fechados</strong>
+<h2>{{ fechados }}</h2>
+</div>
+
+</div>
 <h2>Pipeline de Leads</h2>
 
 {% for lead in leads %}
