@@ -64,7 +64,7 @@ def index():
         return redirect(url_for('index'))
 
     # Obtener leads del usuario actual
-    cursor.execute("SELECT * FROM leads WHERE user_id = %s ORDER BY id DESC", (current_user.id,))
+    cursor.execute("SELECT id, nome, whatsapp, imovel, observacoes, COALESCE(status, 'Novo') AS status FROM leads WHERE user_id = %s ORDER BY id DESC", (current_user.id,))
     leads = cursor.fetchall()
     cursor.close()
     conn.close()
